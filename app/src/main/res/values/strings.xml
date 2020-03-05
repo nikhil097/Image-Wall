@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ImagesApp</string>
+
+    <string name="please_wait">Please wait&#8230;</string>
+    <string name="error_msg_no_internet">Not connected to internet</string>
+    <string name="error_msg_timeout">The server took too long to respond</string>
+
+</resources>

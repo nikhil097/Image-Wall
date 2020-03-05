@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        applicationId "com.nikhil.imagesapp"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug{
+            buildConfigField("String", "API_BASE_URL", "${API_BASE_URL}")
+        }
+        release {
+            minifyEnabled false
+            buildConfigField("String", "API_BASE_URL", "${API_BASE_URL}")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin.stdlib}"
+    implementation "androidx.core:core-ktx:${versions.androidx.ktx.core}"
+    implementation "androidx.collection:collection-ktx:${versions.androidx.ktx.collection}"
+    implementation "androidx.appcompat:appcompat:${versions.androidx.appCompat}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraintLayout}"
+    implementation "com.google.android.material:material:${versions.android.material}"
+
+    // lifecycle
+    implementation "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
+    kapt "androidx.lifecycle:lifecycle-common-java8:${versions.androidx.lifecycle}"
+
+    //okhttp & retrofit
+    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
+    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+
+    // Dagger dependencies
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
+    implementation "com.google.dagger:dagger:${versions.dagger}"
+    implementation ("com.google.dagger:dagger-android-support:${versions.dagger}") {
+        exclude group: 'com.android.support'
+    }
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
+
+    //glide
+    implementation "com.github.bumptech.glide:glide:${versions.glide}"
+    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
+    implementation ("com.github.bumptech.glide:recyclerview-integration:${versions.glide}") {
+        transitive = false
+    }
+
+    //RxJava and RxAndroid
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rx.java}"
+    implementation "io.reactivex.rxjava2:rxandroid:${versions.rx.android}"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${versions.rx.binding}"
+
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
+    implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
+
+    implementation 'com.facebook.android:facebook-login:5.5.1'
+
+    //miscellaneous
+    implementation ("com.afollestad.material-dialogs:core:0.9.6.0") {
+        exclude group: 'com.android.support'
+    }
+    implementation 'com.facebook.shimmer:shimmer:0.3.0@aar'
+    implementation 'com.github.nkzawa:socket.io-client:0.3.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+}
