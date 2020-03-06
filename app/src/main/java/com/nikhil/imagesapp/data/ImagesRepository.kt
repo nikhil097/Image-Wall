@@ -23,7 +23,7 @@ class ImagesRepository@Inject constructor(private val mApiService: ApiService) {
 
     fun uploadImage(selectedFile: File): Completable {
         val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), selectedFile)
-        val body = MultipartBody.Part.createFormData("image", selectedFile.name, requestFile)
+        val body = MultipartBody.Part.createFormData("photo", selectedFile.name, requestFile)
 
         return mApiService.uploadImage(body)
             .subscribeOn(Schedulers.newThread())
