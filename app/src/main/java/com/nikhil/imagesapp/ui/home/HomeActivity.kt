@@ -12,6 +12,7 @@ import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.nikhil.imagesapp.BuildConfig
 import com.nikhil.imagesapp.R
@@ -47,7 +48,8 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
     private lateinit var mViewModel: HomeViewModel
     private var rxPermissions: RxPermissions? = null
     private var compositeDisposable = CompositeDisposable()
-    private val REQUEST_CODE_OPEN_GALLERY = 1234;
+    var mImages: MutableList<Image> = arrayListOf()
+    private val REQUEST_CODE_OPEN_GALLERY = 1234
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +61,10 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
         rxPermissions = RxPermissions(this)
         setupObservers()
         mViewModel.getAllImages()
+
+        fab_upload_image.setOnClickListener {
+            ChooseImageSourceBottomSheet.showDialog(this, supportFragmentManager)
+        }
     }
 
     private fun setupObservers() {
@@ -70,7 +76,8 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
                 showLoading(isLoading)
 
                 response?.let {
-                    inflateData(it)
+                    mImages.addAll(it)
+                    inflateData()
                 }
 
                 error?.let {
@@ -80,10 +87,10 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
         })
     }
 
-    private fun inflateData(imagesList: List<Image>) {
-        fab_upload_image.setOnClickListener {
-            ChooseImageSourceBottomSheet.showDialog(this, supportFragmentManager)
-        }
+    private fun inflateData() {
+        val adapter = ImagesAdapter(mImages)
+        recyclerView_images.layoutManager = GridLayoutManager(this, 2)
+        recyclerView_images.adapter = adapter
     }
 
     private fun openGallery() {
