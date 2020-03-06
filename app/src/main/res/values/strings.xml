@@ -5,5 +5,14 @@
     <string name="error_msg_no_internet">Not connected to internet</string>
     <string name="error_msg_timeout">The server took too long to respond</string>
     <string name="home">Home</string>
+    <string name="upload_image_from">Upload Image From</string>
+
+    <string name="rationale_ask_again">
+        This app may not work correctly without the requested permissions.
+        Open the app settings screen to modify app permissions.
+    </string>
+    <string name="title_settings_dialog">Permissions Required</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
 
 </resources>

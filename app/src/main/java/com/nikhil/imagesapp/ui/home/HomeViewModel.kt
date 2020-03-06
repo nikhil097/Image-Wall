@@ -8,14 +8,16 @@ import com.nikhil.imagesapp.data.remote.DataWrapper
 import com.nikhil.imagesapp.models.Image
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 class HomeViewModel@Inject constructor(private val mImagesRepository: ImagesRepository): ViewModel() {
 
     private val mCompositeDisposable = CompositeDisposable()
     private val _allImagesObserver = MutableLiveData<DataWrapper<List<Image>>>()
+    private val _uploadImageObserver = MutableLiveData<DataWrapper<List<Image>>>()
 
-    fun getAlImages() {
+    fun getAllImages() {
         _allImagesObserver.value = DataWrapper(isLoading = true)
         mCompositeDisposable.add(mImagesRepository.getAllImages()
             .subscribe ({
@@ -27,11 +29,23 @@ class HomeViewModel@Inject constructor(private val mImagesRepository: ImagesRepo
         )
     }
 
+    fun uploadImage(file: File) {
+        _uploadImageObserver.value = DataWrapper(isLoading = true)
+        mCompositeDisposable.add(mImagesRepository.uploadImage(file)
+            .subscribe ({
+
+            }, {
+                Timber.e(it)
+
+            })
+        )
+    }
+
     override fun onCleared() {
         super.onCleared()
         mCompositeDisposable.clear()
     }
 
-    val referEarnDataObserver: LiveData<DataWrapper<List<Image>>> = _allImagesObserver
+    val allImagesObserver: LiveData<DataWrapper<List<Image>>> = _allImagesObserver
 
 }
