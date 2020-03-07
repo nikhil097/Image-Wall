@@ -15,14 +15,13 @@ class ImagesAdapter(private var data: MutableList<Image>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface Callbacks {
-        fun onRetryClick()
+        fun onItemClick(imageUrl: String)
     }
 
-    var context: Context? = null
+    private var mCallbacks: Callbacks? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        context = parent.context
-        return ImageViewHolder(LayoutInflater.from(context).inflate(R.layout.item_image_thumbnail, parent, false))
+        return ImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_image_thumbnail, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -35,6 +34,13 @@ class ImagesAdapter(private var data: MutableList<Image>) :
 
     private fun bindItem(holder: ImageViewHolder, image: Image, position: Int) {
         holder.imageThumbnail.loadImageUrl(imageUrl = image.imageUrl, resourceId = R.color.colorGrey)
+        holder.imageThumbnail.setOnClickListener {
+            mCallbacks?.onItemClick(image.imageUrl)
+        }
+    }
+
+    fun setCalbacks(callbacks: Callbacks) {
+        mCallbacks = callbacks;
     }
 
     fun refreshData(list: List<Image>) {

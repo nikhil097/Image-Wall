@@ -21,9 +21,11 @@ import com.nikhil.imagesapp.models.Image
 import com.nikhil.imagesapp.ui.base.BaseActivity
 import com.nikhil.imagesapp.ui.camera.CameraActivity
 import com.nikhil.imagesapp.ui.home.imageSourceOptions.ChooseImageSourceBottomSheet
+import com.nikhil.imagesapp.ui.viewImage.ViewImageActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_home.*
+import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -32,7 +34,7 @@ import javax.inject.Inject
 import kotlin.math.min
 
 
-class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
+class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, ImagesAdapter.Callbacks {
 
     companion object {
 
@@ -105,6 +107,7 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
 
     private fun inflateData() {
         val adapter = ImagesAdapter(mImages)
+        adapter.setCalbacks(this)
         recyclerView_images.layoutManager = GridLayoutManager(this, 2)
         recyclerView_images.adapter = adapter
     }
@@ -206,6 +209,10 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
 
     override fun onGallerySelected() {
         openGallery()
+    }
+
+    override fun onItemClick(imageUrl: String) {
+        ViewImageActivity.launchActivity(this@HomeActivity, imageUrl)
     }
 
 }

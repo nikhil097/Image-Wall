@@ -28,6 +28,9 @@
         <activity android:name=".ui.camera.CameraActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity android:name=".ui.viewImage.ViewImageActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>
