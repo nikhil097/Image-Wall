@@ -34,7 +34,7 @@ class ImagesAdapter(private var data: MutableList<Image>) :
     }
 
     private fun bindItem(holder: ImageViewHolder, image: Image, position: Int) {
-        holder.imageThumbnail.loadImageUrl(imageUrl = image.imageUrl)
+        holder.imageThumbnail.loadImageUrl(imageUrl = image.imageUrl, resourceId = R.color.colorGrey)
     }
 
     fun refreshData(list: List<Image>) {

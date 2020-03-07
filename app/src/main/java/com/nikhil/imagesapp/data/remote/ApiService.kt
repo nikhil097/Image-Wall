@@ -1,5 +1,6 @@
 package com.nikhil.imagesapp.data.remote
 
+import com.nikhil.imagesapp.models.ImageUploadResponse
 import com.nikhil.imagesapp.models.ImagesResponse
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -16,5 +17,5 @@ interface ApiService {
 
     @Multipart
     @POST("images")
-    fun uploadImage(@Part image: MultipartBody.Part): Completable
+    fun uploadImage(@Part image: MultipartBody.Part): Observable<ImageUploadResponse>
 }

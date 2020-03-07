@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.nikhil.imagesapp.ImagesAppApplication
+import com.nikhil.imagesapp.R
 
 fun getSnackBar(view: View, value: String): Snackbar {
     return getSnackBar(view, value, Snackbar.LENGTH_LONG)
@@ -43,13 +44,21 @@ inline fun <T:Any, R> whenNotNull(input: T?, callback: (T)->R): R? {
     return input?.let(callback)
 }
 
-fun ImageView.loadImageUrl(imageUrl: String, requestOptions: RequestOptions = RequestOptions.centerCropTransform(), roundedCorners: Boolean = false) {
+fun ImageView.loadImageUrl(imageUrl: String, requestOptions: RequestOptions = RequestOptions.centerCropTransform(), roundedCorners: Boolean = false, resourceId: Int? = null) {
     val options = if(roundedCorners) {
         RequestOptions().transform(CenterCrop(), RoundedCorners(8))
     } else requestOptions
 
-    Glide.with(this)
-        .load(imageUrl)
-        .apply(options.priority(Priority.HIGH))
-        .into(this)
+    if (resourceId != null) {
+        Glide.with(this)
+            .load(imageUrl)
+            .placeholder(resourceId)
+            .apply(options.priority(Priority.HIGH))
+            .into(this)
+    } else {
+        Glide.with(this)
+            .load(imageUrl)
+            .apply(options.priority(Priority.HIGH))
+            .into(this)
+    }
 }

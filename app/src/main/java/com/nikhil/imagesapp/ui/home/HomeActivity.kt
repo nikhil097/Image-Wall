@@ -76,12 +76,28 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
                 showLoading(isLoading)
 
                 response?.let {
+                    mImages.clear()
                     mImages.addAll(it)
                     inflateData()
                 }
 
                 error?.let {
+                    showError(it)
+                }
+            }
+        })
 
+        mViewModel.uploadImageObserver.observe(this, Observer { data ->
+
+            data.run {
+
+                showLoading(isLoading)
+                response?.let {
+                    mViewModel.getAllImages()
+                }
+
+                error?.let {
+                    showError(it)
                 }
             }
         })

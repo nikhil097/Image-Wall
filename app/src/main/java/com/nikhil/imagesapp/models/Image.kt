@@ -15,3 +15,12 @@ class Image (
     @SerializedName("url")
     val imageUrl : String
 )
+
+class ImageUploadResponse (
+    @SerializedName("code")
+    val code: Int,
+    @SerializedName("success")
+    val success: Boolean,
+    @SerializedName("message")
+    val message: String?
+)

@@ -15,7 +15,7 @@ class HomeViewModel@Inject constructor(private val mImagesRepository: ImagesRepo
 
     private val mCompositeDisposable = CompositeDisposable()
     private val _allImagesObserver = MutableLiveData<DataWrapper<List<Image>>>()
-    private val _uploadImageObserver = MutableLiveData<DataWrapper<List<Image>>>()
+    private val _uploadImageObserver = MutableLiveData<DataWrapper<String>>()
 
     fun getAllImages() {
         _allImagesObserver.value = DataWrapper(isLoading = true)
@@ -33,10 +33,10 @@ class HomeViewModel@Inject constructor(private val mImagesRepository: ImagesRepo
         _uploadImageObserver.value = DataWrapper(isLoading = true)
         mCompositeDisposable.add(mImagesRepository.uploadImage(file)
             .subscribe ({
-
+                _uploadImageObserver.value = DataWrapper(response = it)
             }, {
                 Timber.e(it)
-
+                _uploadImageObserver.value = DataWrapper(error = it)
             })
         )
     }
@@ -47,5 +47,6 @@ class HomeViewModel@Inject constructor(private val mImagesRepository: ImagesRepo
     }
 
     val allImagesObserver: LiveData<DataWrapper<List<Image>>> = _allImagesObserver
+    val uploadImageObserver: LiveData<DataWrapper<String>> = _uploadImageObserver
 
 }

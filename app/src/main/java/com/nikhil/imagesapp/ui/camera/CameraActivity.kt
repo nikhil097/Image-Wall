@@ -68,7 +68,6 @@ class CameraActivity : BaseActivity() {
             )
     }
 
-
     private var rxPermissions: RxPermissions? = null
     private var compositeDisposable = CompositeDisposable()
     val KEY_EVENT_ACTION = "key_event_action"

@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.nikhil.imagesapp.BuildConfig
 import com.nikhil.imagesapp.data.remote.ApiService
-import com.nikhil.imagesapp.data.remote.UnwrapConverterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -58,7 +57,6 @@ class NetworkModule(private val baseUrl : String) {
     fun provideRetrofit(gsonConverterFactory: GsonConverterFactory, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(gsonConverterFactory)
-            .addConverterFactory(UnwrapConverterFactory(gsonConverterFactory))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .baseUrl(baseUrl)
             .client(okHttpClient)

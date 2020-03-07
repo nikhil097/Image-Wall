@@ -2,7 +2,7 @@ package com.nikhil.imagesapp.data
 
 import com.nikhil.imagesapp.data.remote.ApiService
 import com.nikhil.imagesapp.models.Image
-import io.reactivex.Completable
+import com.nikhil.imagesapp.models.ImageUploadResponse
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -21,11 +21,12 @@ class ImagesRepository@Inject constructor(private val mApiService: ApiService) {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun uploadImage(selectedFile: File): Completable {
+    fun uploadImage(selectedFile: File): Observable<String> {
         val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), selectedFile)
         val body = MultipartBody.Part.createFormData("photo", selectedFile.name, requestFile)
 
         return mApiService.uploadImage(body)
+            .map { it.message ?: "Uploaded" }
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
     }
