@@ -19,6 +19,7 @@ import com.nikhil.imagesapp.R
 import com.nikhil.imagesapp.inject.ViewModelFactory
 import com.nikhil.imagesapp.models.Image
 import com.nikhil.imagesapp.ui.base.BaseActivity
+import com.nikhil.imagesapp.ui.camera.CameraActivity
 import com.nikhil.imagesapp.ui.home.imageSourceOptions.ChooseImageSourceBottomSheet
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.disposables.CompositeDisposable
@@ -54,7 +55,6 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        isDisplayHomeAsUpEnabled = true
         setActivityTitle(getString(R.string.home))
 
         mViewModel = ViewModelProvider(this, mViewModelFactory).get(HomeViewModel::class.java)
@@ -185,7 +185,7 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks {
     }
 
     override fun onCameraSelected() {
-
+        CameraActivity.launchActivity(this@HomeActivity)
     }
 
     override fun onGallerySelected() {

@@ -29,6 +29,7 @@ buildscript {
                     'binding': '2.1.1'
             ],
             'timber': '4.7.0',
+            'camerax_version' : '1.0.0-beta01'
     ]
 
     repositories {

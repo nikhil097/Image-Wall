@@ -1,5 +1,6 @@
 package com.nikhil.imagesapp.inject
 
+import com.nikhil.imagesapp.ui.camera.CameraActivity
 import com.nikhil.imagesapp.ui.home.HomeActivity
 import com.nikhil.imagesapp.ui.home.imageSourceOptions.ChooseImageSourceBottomSheet
 import dagger.Module
@@ -15,4 +16,9 @@ abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector
     abstract fun chooseImageSourceBottomSheet(): ChooseImageSourceBottomSheet
+
+    @ActivityScoped
+    @ContributesAndroidInjector
+    abstract fun cameraActivity(): CameraActivity
+
 }

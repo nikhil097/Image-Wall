@@ -325,4 +325,8 @@
     <dimen name="padding">12dp</dimen>
     <dimen name="padding_large">16dp</dimen>
 
+    <dimen name="round_button_small">32dp</dimen>
+    <dimen name="round_button_medium">64dp</dimen>
+    <dimen name="round_button_large">92dp</dimen>
+
 </resources>

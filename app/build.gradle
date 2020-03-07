@@ -7,6 +7,11 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.nikhil.imagesapp"
         minSdkVersion 21
@@ -77,17 +82,18 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:${versions.rx.java}"
     implementation "io.reactivex.rxjava2:rxandroid:${versions.rx.android}"
     implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${versions.rx.binding}"
-
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
-    implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
 
-    implementation 'com.facebook.android:facebook-login:5.5.1'
+    //CameraX
+    implementation "androidx.camera:camera-core:${versions.camerax_version}"
+    implementation "androidx.camera:camera-camera2:${versions.camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${versions.camerax_version}"
+    implementation "androidx.camera:camera-view:1.0.0-alpha08"
 
     //miscellaneous
     implementation ("com.afollestad.material-dialogs:core:0.9.6.0") {
         exclude group: 'com.android.support'
     }
     implementation 'com.facebook.shimmer:shimmer:0.3.0@aar'
-    implementation 'com.github.nkzawa:socket.io-client:0.3.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
 }
