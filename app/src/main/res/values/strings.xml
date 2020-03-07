@@ -14,5 +14,6 @@
     <string name="title_settings_dialog">Permissions Required</string>
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
+    <string name="error_msg_retrieve_selected_image">Error getting selected image</string>
 
 </resources>

@@ -10,6 +10,9 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,6 +26,7 @@ import com.nikhil.imagesapp.ui.camera.CameraActivity
 import com.nikhil.imagesapp.ui.home.imageSourceOptions.ChooseImageSourceBottomSheet
 import com.nikhil.imagesapp.ui.viewImage.ViewImageActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.yalantis.ucrop.UCrop
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_home.*
 import timber.log.Timber
@@ -192,7 +196,7 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
                         inputStream.close()
                         outputStream.close()
 
-                        mViewModel.uploadImage(file)
+                        startCropActivity(file)
 
                     } catch (e: FileNotFoundException) {
                         Log.v("exception is", e.message)
@@ -201,6 +205,32 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
                 }
             }
         }
+
+        if(resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            if (intent!=null) {
+                val resultUri = UCrop.getOutput(intent)
+                mViewModel.uploadImage(File(resultUri!!.path!!))
+            } else {
+                Toast.makeText(this@HomeActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
+            }
+
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(intent!!)
+            Toast.makeText(this@HomeActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun startCropActivity(file: File){
+        val options = UCrop.Options()
+        options.setHideBottomControls(true)
+        options.withAspectRatio(1f, 1f)
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+
+        UCrop.of(Uri.fromFile(file), Uri.fromFile(File(cacheDir, System.currentTimeMillis().toString())))
+            .withOptions(options)
+            .withMaxResultSize(512, 512)
+            .start(this)
     }
 
     override fun onCameraSelected() {
