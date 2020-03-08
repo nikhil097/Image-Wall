@@ -19,10 +19,13 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.*
 import androidx.camera.core.impl.PreviewConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -50,7 +53,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-class CameraActivity : BaseActivity() {
+class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetector.OnScaleGestureListener {
 
     companion object {
 
@@ -90,6 +93,8 @@ class CameraActivity : BaseActivity() {
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
+    private lateinit var scaleDetector: ScaleGestureDetector
+    private var lastScaleFactor = 0f
 
     private val displayManager by lazy {
         getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -99,6 +104,7 @@ class CameraActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
         rxPermissions = RxPermissions(this)
+        scaleDetector = ScaleGestureDetector(this, this);
         askPermissionsAndStartCamera()
     }
 
@@ -169,6 +175,7 @@ class CameraActivity : BaseActivity() {
     private fun initCameraView() {
         container = layout_camera_container as ConstraintLayout
         viewFinder = container.findViewById(R.id.view_finder)
+        viewFinder.setOnTouchListener(this)
         cameraExecutor = Executors.newSingleThreadExecutor()
         broadcastManager = LocalBroadcastManager.getInstance(layout_camera_container.context)
         val filter = IntentFilter().apply { addAction(KEY_EVENT_ACTION) }
@@ -293,6 +300,32 @@ class CameraActivity : BaseActivity() {
             Toast.makeText(this@CameraActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+        scaleDetector.onTouchEvent(event)
+        return true
+    }
+
+    override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+        return true
+    }
+
+    override fun onScaleEnd(detector: ScaleGestureDetector?) {
+    }
+
+    override fun onScale(detector: ScaleGestureDetector?): Boolean {
+        val zoomRatio: Float? = camera!!.cameraInfo.zoomState.value!!.zoomRatio
+        val minZoomRatio: Float? = camera!!.cameraInfo.zoomState.value!!.minZoomRatio
+        val maxZoomRatio: Float? = camera!!.cameraInfo.zoomState.value!!.maxZoomRatio
+        val scaleFactor = scaleDetector.getScaleFactor()
+        if (lastScaleFactor == 0f || (Math.signum(scaleFactor) == Math.signum(lastScaleFactor))) {
+            camera!!.cameraControl.setZoomRatio(Math.max(minZoomRatio!!, Math.min(zoomRatio!! * scaleFactor, maxZoomRatio!!)))
+            lastScaleFactor = scaleFactor
+        } else {
+            lastScaleFactor = 0f
+        }
+        return true
     }
 
     override fun onDestroy() {
