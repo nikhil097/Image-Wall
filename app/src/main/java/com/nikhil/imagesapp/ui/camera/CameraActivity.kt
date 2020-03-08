@@ -96,7 +96,7 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
     private var camera: Camera? = null
     private lateinit var scaleDetector: ScaleGestureDetector
     private var lastScaleFactor = 0f
-    private var flashMode: Int = ImageCapture.FLASH_MODE_OFF
+    private var flashMode: Int = ImageCapture.FLASH_MODE_ON
 
     private val displayManager by lazy {
         getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -106,7 +106,6 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
         rxPermissions = RxPermissions(this)
-        scaleDetector = ScaleGestureDetector(this, this);
         askPermissionsAndStartCamera()
     }
 
@@ -177,6 +176,7 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
     private fun initCameraView() {
         container = layout_camera_container as ConstraintLayout
         viewFinder = container.findViewById(R.id.view_finder)
+        scaleDetector = ScaleGestureDetector(this, this);
         viewFinder.setOnTouchListener(this)
         cameraExecutor = Executors.newSingleThreadExecutor()
         broadcastManager = LocalBroadcastManager.getInstance(layout_camera_container.context)
@@ -243,6 +243,14 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
             container.removeView(it)
         }
         val controls = View.inflate(this@CameraActivity, R.layout.camera_ui_container, container)
+        when (flashMode) {
+            ImageCapture.FLASH_MODE_ON -> {
+                controls.findViewById<ImageButton>(R.id.camera_flash_button).setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_flash_on))
+            }
+            ImageCapture.FLASH_MODE_OFF -> {
+                controls.findViewById<ImageButton>(R.id.camera_flash_button).setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_flash_off))
+            }
+        }
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
             imageCapture?.let { imageCapture ->
 
@@ -284,6 +292,16 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
             }
             bindCameraUseCases()
         }
+
+       if (CameraSelector.LENS_FACING_BACK == lensFacing) {
+           controls.findViewById<ImageButton>(R.id.camera_flash_button).setOnClickListener {
+               flashMode = if (flashMode == ImageCapture.FLASH_MODE_OFF) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF
+               updateCameraUi()
+               bindCameraUseCases()
+           }
+       } else {
+           controls.findViewById<ImageButton>(R.id.camera_flash_button).visibility = View.GONE
+       }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
