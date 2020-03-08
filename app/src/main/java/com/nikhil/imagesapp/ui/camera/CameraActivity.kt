@@ -1,6 +1,7 @@
 package com.nikhil.imagesapp.ui.camera
 
 import android.Manifest
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.core.impl.PreviewConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -33,7 +35,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.nikhil.imagesapp.BuildConfig
 import com.nikhil.imagesapp.R
 import com.nikhil.imagesapp.ui.base.BaseActivity
+import com.nikhil.imagesapp.ui.home.HomeActivity
+import com.nikhil.imagesapp.utils.startCropActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.yalantis.ucrop.UCrop
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_camera.*
 import java.io.File
@@ -51,9 +56,9 @@ class CameraActivity : BaseActivity() {
 
         private val TAG = CameraActivity::class.java.name
 
-        fun launchActivity(startingActivity: Context) {
+        fun launchActivity(startingActivity: Activity) {
             val intent = Intent(startingActivity, CameraActivity::class.java)
-            startingActivity.startActivity(intent)
+            startingActivity.startActivityForResult(intent, HomeActivity.REQUEST_CODE_OPEN_CAMERA)
         }
 
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -245,21 +250,7 @@ class CameraActivity : BaseActivity() {
                         }
 
                         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                            val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                                sendBroadcast(
-                                    Intent(android.hardware.Camera.ACTION_NEW_PICTURE, savedUri)
-                                )
-                            }
-                            val mimeType = MimeTypeMap.getSingleton()
-                                .getMimeTypeFromExtension(savedUri.toFile().extension)
-                            MediaScannerConnection.scanFile(
-                                this@CameraActivity,
-                                arrayOf(savedUri.toString()),
-                                arrayOf(mimeType)
-                            ) { _, uri ->
-
-                            }
+                            startCropActivity(photoFile, this@CameraActivity)
                         }
                     })
 
@@ -282,6 +273,25 @@ class CameraActivity : BaseActivity() {
                 CameraSelector.LENS_FACING_FRONT
             }
             bindCameraUseCases()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+
+        if(resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            if (intent!=null) {
+                val resultUri = UCrop.getOutput(intent)
+                val resultantIntent = Intent()
+                resultantIntent.putExtra(HomeActivity.IMAGE_URI_DATA, resultUri.toString())
+                setResult(Activity.RESULT_OK, resultantIntent)
+            } else {
+                Toast.makeText(this@CameraActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
+            }
+            finish()
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            Toast.makeText(this@CameraActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 

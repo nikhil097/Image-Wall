@@ -12,6 +12,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +26,7 @@ import com.nikhil.imagesapp.ui.base.BaseActivity
 import com.nikhil.imagesapp.ui.camera.CameraActivity
 import com.nikhil.imagesapp.ui.home.imageSourceOptions.ChooseImageSourceBottomSheet
 import com.nikhil.imagesapp.ui.viewImage.ViewImageActivity
+import com.nikhil.imagesapp.utils.startCropActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.yalantis.ucrop.UCrop
 import io.reactivex.disposables.CompositeDisposable
@@ -43,6 +45,8 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
     companion object {
 
         private val TAG = HomeActivity::class.java.name
+        val REQUEST_CODE_OPEN_CAMERA = 1235
+        val IMAGE_URI_DATA = "image_uri_data"
 
         fun launchActivity(startingActivity: Context) {
             val intent = Intent(startingActivity, HomeActivity::class.java)
@@ -179,29 +183,7 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
             if (requestCode == REQUEST_CODE_OPEN_GALLERY) {
                 if (intent != null) {
                     val uri = intent.data
-                    val file = File(cacheDir, getFileName(uri!!)!!)
-                    val maxBufferSize = 1 * 1024 * 1024
-
-                    try {
-                        val inputStream = contentResolver.openInputStream(uri)
-                        val bytesAvailable = inputStream!!.available()
-                        val bufferSize = min(bytesAvailable, maxBufferSize)
-                        val buffers = ByteArray(bufferSize)
-
-                        val outputStream = FileOutputStream(file)
-                        while (true) {
-                            val readFile = inputStream.read(buffers)
-                            if (readFile != -1) outputStream.write(buffers, 0, readFile) else break
-                        }
-                        inputStream.close()
-                        outputStream.close()
-
-                        startCropActivity(file)
-
-                    } catch (e: FileNotFoundException) {
-                        Log.v("exception is", e.message)
-                    } catch (e: IOException) {
-                    }
+                    startCropActivity(getFile(uri!!), this)
                 }
             }
         }
@@ -209,28 +191,45 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
         if(resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             if (intent!=null) {
                 val resultUri = UCrop.getOutput(intent)
-                mViewModel.uploadImage(File(resultUri!!.path!!))
-            } else {
-                Toast.makeText(this@HomeActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
+                mViewModel.uploadImage(getFile(resultUri!!))
             }
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
             val cropError = UCrop.getError(intent!!)
             Toast.makeText(this@HomeActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
         }
+
+        if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_OPEN_CAMERA) {
+            if (intent!=null) {
+                val resultUri = Uri.parse(intent.getStringExtra(IMAGE_URI_DATA))
+                mViewModel.uploadImage(getFile(resultUri!!))
+            }
+        }
     }
 
-    private fun startCropActivity(file: File){
-        val options = UCrop.Options()
-        options.setHideBottomControls(true)
-        options.withAspectRatio(1f, 1f)
-        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+    private fun getFile(uri: Uri): File {
+        val file = File(cacheDir, getFileName(uri!!)!!)
+        val maxBufferSize = 1 * 1024 * 1024
 
-        UCrop.of(Uri.fromFile(file), Uri.fromFile(File(cacheDir, System.currentTimeMillis().toString())))
-            .withOptions(options)
-            .withMaxResultSize(512, 512)
-            .start(this)
+        try {
+            val inputStream = contentResolver.openInputStream(uri)
+            val bytesAvailable = inputStream!!.available()
+            val bufferSize = min(bytesAvailable, maxBufferSize)
+            val buffers = ByteArray(bufferSize)
+
+            val outputStream = FileOutputStream(file)
+            while (true) {
+                val readFile = inputStream.read(buffers)
+                if (readFile != -1) outputStream.write(buffers, 0, readFile) else break
+            }
+            inputStream.close()
+            outputStream.close()
+
+        } catch (e : FileNotFoundException) {
+
+        }
+
+     return file
     }
 
     override fun onCameraSelected() {
