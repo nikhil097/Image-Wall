@@ -87,11 +87,17 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
                 showLoading(isLoading)
 
                 response?.let {
-                    mImages.clear()
-                    mImages.addAll(it)
-                    inflateData()
+                    if (it.isNotEmpty()) {
+                        mImages.clear()
+                        mImages.addAll(it)
+                        inflateData()
+                        text_no_images.visibility = View.GONE
+                        recyclerView_images.visibility = View.VISIBLE
+                    } else {
+                        text_no_images.visibility = View.VISIBLE
+                        recyclerView_images.visibility = View.GONE
+                    }
                 }
-
                 error?.let {
                     showError(it)
                 }

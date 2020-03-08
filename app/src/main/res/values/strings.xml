@@ -15,5 +15,6 @@
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="error_msg_retrieve_selected_image">Error getting selected image</string>
+    <string name="you_don_t_have_any_images">You don\'t have any images</string>
 
 </resources>

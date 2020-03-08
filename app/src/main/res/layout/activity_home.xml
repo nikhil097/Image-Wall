@@ -20,6 +20,19 @@
            app:layout_constraintEnd_toEndOf="parent"
            app:layout_constraintBottom_toBottomOf="parent"/>
 
+       <androidx.appcompat.widget.AppCompatTextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/text_no_images"
+           android:text="@string/you_don_t_have_any_images"
+           android:textSize="24sp"
+           android:textStyle="bold"
+           android:visibility="gone"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintBottom_toBottomOf="parent" />
+
    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
