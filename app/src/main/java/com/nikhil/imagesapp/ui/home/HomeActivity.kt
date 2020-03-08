@@ -202,7 +202,7 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
         if(resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             if (intent!=null) {
                 val resultUri = UCrop.getOutput(intent)
-                mViewModel.uploadImage(getFile(resultUri!!))
+                mViewModel.uploadImage(File(resultUri!!.path!!))
             }
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
@@ -212,8 +212,8 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
 
         if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_OPEN_CAMERA) {
             if (intent!=null) {
-                val resultUri = Uri.parse(intent.getStringExtra(IMAGE_URI_DATA))
-                mViewModel.uploadImage(getFile(resultUri!!))
+                val resultFile: File = intent.getSerializableExtra(IMAGE_URI_DATA) as File
+                mViewModel.uploadImage(resultFile)
             }
         }
     }

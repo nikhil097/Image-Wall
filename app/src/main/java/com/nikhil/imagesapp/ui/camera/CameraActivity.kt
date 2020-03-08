@@ -96,7 +96,7 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
     private var camera: Camera? = null
     private lateinit var scaleDetector: ScaleGestureDetector
     private var lastScaleFactor = 0f
-    private var flashMode: Int = ImageCapture.FLASH_MODE_ON
+    private var flashMode: Int = ImageCapture.FLASH_MODE_OFF
 
     private val displayManager by lazy {
         getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -286,8 +286,10 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
 
         controls.findViewById<ImageButton>(R.id.camera_switch_button).setOnClickListener {
             lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+                controls.findViewById<ImageButton>(R.id.camera_flash_button).visibility = View.VISIBLE
                 CameraSelector.LENS_FACING_BACK
             } else {
+                controls.findViewById<ImageButton>(R.id.camera_flash_button).visibility = View.GONE
                 CameraSelector.LENS_FACING_FRONT
             }
             bindCameraUseCases()
@@ -295,12 +297,12 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
 
        if (CameraSelector.LENS_FACING_BACK == lensFacing) {
            controls.findViewById<ImageButton>(R.id.camera_flash_button).setOnClickListener {
-               flashMode = if (flashMode == ImageCapture.FLASH_MODE_OFF) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF
-               updateCameraUi()
-               bindCameraUseCases()
+              if (camera!!.cameraInfo.hasFlashUnit()) {
+                  flashMode = if (flashMode == ImageCapture.FLASH_MODE_OFF) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF
+                  updateCameraUi()
+                  bindCameraUseCases()
+              }
            }
-       } else {
-           controls.findViewById<ImageButton>(R.id.camera_flash_button).visibility = View.GONE
        }
     }
 
@@ -311,7 +313,7 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
             if (intent!=null) {
                 val resultUri = UCrop.getOutput(intent)
                 val resultantIntent = Intent()
-                resultantIntent.putExtra(HomeActivity.IMAGE_URI_DATA, resultUri.toString())
+                resultantIntent.putExtra(HomeActivity.IMAGE_URI_DATA, File(resultUri!!.path!!))
                 setResult(Activity.RESULT_OK, resultantIntent)
             } else {
                 Toast.makeText(this@CameraActivity, R.string.error_msg_retrieve_selected_image, Toast.LENGTH_SHORT).show()
@@ -351,8 +353,8 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
 
     override fun onDestroy() {
         super.onDestroy()
-        cameraExecutor.shutdown()
-        broadcastManager.unregisterReceiver(volumeDownReceiver)
+        if (::cameraExecutor.isInitialized) cameraExecutor.shutdown()
+        if (::broadcastManager.isInitialized) broadcastManager.unregisterReceiver(volumeDownReceiver)
         displayManager.unregisterDisplayListener(displayListener)
     }
 
