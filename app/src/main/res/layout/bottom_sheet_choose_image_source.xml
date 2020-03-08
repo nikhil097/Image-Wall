@@ -10,32 +10,34 @@
         android:layout_height="wrap_content"
         android:id="@+id/text_select_source_heading"
         android:text="@string/upload_image_from"
-        android:gravity="center"
-        android:textSize="22sp"
+        android:textSize="24sp"
+        android:textColor="@color/colorBlack"
         android:padding="@dimen/padding_large"
+        android:layout_marginStart="@dimen/dp_8"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="H, 26:9"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:id="@+id/image_camera"
         app:srcCompat="@drawable/ic_camera"
+        android:foreground="?android:selectableItemBackground"
         android:paddingStart="@dimen/padding_large"
         android:paddingEnd="@dimen/padding_large"
+        android:layout_marginStart="@dimen/padding_large"
         app:layout_constraintTop_toBottomOf="@id/text_select_source_heading"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/image_gallery"/>
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="H,26:9"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:id="@+id/image_gallery"
         app:srcCompat="@drawable/ic_gallery"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:foreground="?android:selectableItemBackground"
+        android:padding="@dimen/padding_large"
         app:layout_constraintStart_toEndOf="@id/image_camera"
         app:layout_constraintBottom_toBottomOf="@id/image_camera"/>
 

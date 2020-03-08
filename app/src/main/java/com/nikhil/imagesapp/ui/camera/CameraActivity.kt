@@ -27,6 +27,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.*
+import androidx.camera.core.impl.CameraCaptureMetaData
 import androidx.camera.core.impl.PreviewConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -95,6 +96,7 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
     private var camera: Camera? = null
     private lateinit var scaleDetector: ScaleGestureDetector
     private var lastScaleFactor = 0f
+    private var flashMode: Int = ImageCapture.FLASH_MODE_OFF
 
     private val displayManager by lazy {
         getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -213,7 +215,8 @@ class CameraActivity : BaseActivity(), View.OnTouchListener, ScaleGestureDetecto
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
+                .setTargetRotation(rotation).
+                    setFlashMode(flashMode)
                 .build()
 
             cameraProvider.unbindAll()

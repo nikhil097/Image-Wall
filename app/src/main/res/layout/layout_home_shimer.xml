@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/padding_large">
 
-    <include
-        layout="@layout/item_thumbnail_shimmer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/image_2"
-        android:id="@+id/image_1"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/padding_large"
+        android:layout_marginEnd="@dimen/padding_large"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <include
-        layout="@layout/item_thumbnail_shimmer"
-        app:layout_constraintStart_toEndOf="@id/image_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/image_2"/>
+        <include layout="@layout/item_thumbnail_shimmer" />
 
-    <include
-        layout="@layout/item_thumbnail_shimmer"
-        app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/image_1"/>
+        <include layout="@layout/item_thumbnail_shimmer" />
 
-    <include
-        layout="@layout/item_thumbnail_shimmer"
-        app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/image_1"/>
+        <include layout="@layout/item_thumbnail_shimmer" />
 
-    <include
-        layout="@layout/item_thumbnail_shimmer"
-        app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/image_1"/>
+        <include layout="@layout/item_thumbnail_shimmer" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/padding_large"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/item_thumbnail_shimmer" />
+
+        <include layout="@layout/item_thumbnail_shimmer" />
+
+        <include layout="@layout/item_thumbnail_shimmer" />
+
+        <include layout="@layout/item_thumbnail_shimmer" />
+
+    </LinearLayout>
+
+</LinearLayout>

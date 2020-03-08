@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
@@ -101,7 +102,7 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
 
             data.run {
 
-                showLoading(isLoading)
+                super.showLoading(isLoading)
                 response?.let {
                     mViewModel.getAllImages()
                 }
@@ -111,6 +112,16 @@ class HomeActivity : BaseActivity(), ChooseImageSourceBottomSheet.Callbacks, Ima
                 }
             }
         })
+    }
+
+    override fun showLoading(active: Boolean) {
+        if (active) {
+            layout_shimmer.visibility = View.VISIBLE
+            layout_shimmer.startShimmer()
+        } else {
+            layout_shimmer.visibility = View.GONE
+            layout_shimmer.stopShimmer()
+        }
     }
 
     private fun inflateData() {

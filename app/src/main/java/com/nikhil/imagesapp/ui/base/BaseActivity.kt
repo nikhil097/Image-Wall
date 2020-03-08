@@ -22,23 +22,10 @@ open class BaseActivity : DaggerAppCompatActivity(), BaseErrorInterface {
 
     private var progressDialog: MaterialDialog? = null
 
-    //If back button is displayed in action bar, return false
-    var isDisplayHomeAsUpEnabled: Boolean
-        get() = false
-        set(value) {
-            if (supportActionBar != null)
-                supportActionBar!!.setDisplayHomeAsUpEnabled(value)
-        }
-
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
 
         injectViews()
-
-        //Displaying the back button in the action bar
-        if (isDisplayHomeAsUpEnabled) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        }
     }
 
     protected fun injectViews() {
@@ -46,19 +33,9 @@ open class BaseActivity : DaggerAppCompatActivity(), BaseErrorInterface {
         setupToolbar()
     }
 
-    fun setContentViewWithoutInject(layoutResId: Int) {
-        super.setContentView(layoutResId)
-    }
-
     protected fun setupToolbar() {
         whenNotNull(toolbar) {
             setSupportActionBar(it)
-        }
-    }
-
-    fun setActivityTitle(title: Int) {
-        whenNotNull(supportActionBar) {
-            it.setTitle(title)
         }
     }
 
